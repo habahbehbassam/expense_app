@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:equatable/equatable.dart';
 import 'package:safqah_assessment/core/error/failures.dart';
 import 'package:safqah_assessment/core/usecases/usecase.dart';
 import 'package:safqah_assessment/features/expenses_list/domain/repositories/expenses_repository.dart';
@@ -15,8 +16,11 @@ class DeleteExpenseUsecase extends UseCase<int, DeleteExpenseParam> {
   }
 }
 
-class DeleteExpenseParam {
-  DeleteExpenseParam(this.id);
+class DeleteExpenseParam extends Equatable{
+  const DeleteExpenseParam(this.id);
 
   final int id;
+
+  @override
+  List<Object?> get props => [id];
 }

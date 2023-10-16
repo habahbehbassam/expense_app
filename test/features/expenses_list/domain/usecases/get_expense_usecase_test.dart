@@ -1,19 +1,21 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:safqah_assessment/core/usecases/usecase.dart';
 import 'package:safqah_assessment/features/expenses_list/domain/entities/expense_item_entity.dart';
 import 'package:safqah_assessment/features/expenses_list/domain/repositories/expenses_repository.dart';
 import 'package:safqah_assessment/features/expenses_list/domain/usecases/get_expense_usecase.dart';
 
-class MocExpenseRepository extends Mock implements ExpensesRepository {}
+@GenerateNiceMocks([MockSpec<ExpensesRepository>()])
+import 'get_expense_usecase_test.mocks.dart';
 
 void main() {
-  late MocExpenseRepository mocExpenseRepository;
+  late ExpensesRepository mocExpenseRepository;
   late GetExpensesUsecase usecase;
 
   setUp(() {
-    mocExpenseRepository = MocExpenseRepository();
+    mocExpenseRepository = MockExpensesRepository();
     usecase = GetExpensesUsecase(mocExpenseRepository);
   });
 
@@ -30,16 +32,15 @@ void main() {
       // arrange
       when(mocExpenseRepository.getAllExpenses()).thenAnswer(
         (_) async => right(
-          List.of([expenseEntity, expenseEntity, expenseEntity]),
+          [expenseEntity, expenseEntity, expenseEntity],
         ),
       );
 
       // act
-      final result =
-          await usecase.call(NoParams());
+      final result = (await usecase.call(NoParams())).fold((l) => l, (r) => r);
       // assert
-      expect(result, right(List.of([expenseEntity, expenseEntity, expenseEntity])));
       verify(mocExpenseRepository.getAllExpenses());
+      expect(result, equals(([expenseEntity, expenseEntity, expenseEntity])));
       verifyNoMoreInteractions(mocExpenseRepository);
     },
   );

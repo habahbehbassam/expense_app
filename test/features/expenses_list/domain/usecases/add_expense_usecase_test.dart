@@ -1,18 +1,21 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:safqah_assessment/features/expenses_list/domain/entities/expense_item_entity.dart';
 import 'package:safqah_assessment/features/expenses_list/domain/repositories/expenses_repository.dart';
 import 'package:safqah_assessment/features/expenses_list/domain/usecases/add_expense_usecase.dart';
 
-class MocExpenseRepository extends Mock implements ExpensesRepository {}
+
+@GenerateNiceMocks([MockSpec<ExpensesRepository>()])
+import 'add_expense_usecase_test.mocks.dart';
 
 void main() {
-  late MocExpenseRepository mocExpenseRepository;
+  late ExpensesRepository mocExpenseRepository;
   late AddExpenseUsecase usecase;
 
   setUp(() {
-    mocExpenseRepository = MocExpenseRepository();
+    mocExpenseRepository = MockExpensesRepository();
     usecase = AddExpenseUsecase(mocExpenseRepository);
   });
 

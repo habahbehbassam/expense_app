@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:safqah_assessment/core/error/failures.dart';
 import 'package:safqah_assessment/features/expenses_list/domain/entities/expense_item_entity.dart';
@@ -9,18 +10,18 @@ import 'package:safqah_assessment/features/expenses_list/domain/usecases/get_exp
 import 'package:safqah_assessment/features/expenses_list/domain/usecases/update_expense_usecase.dart';
 import 'package:safqah_assessment/features/expenses_list/presentation/providers/expenses_list_provider.dart';
 
-class MockAddExpenseUsecase extends Mock implements AddExpenseUsecase {}
-
-class MockDeleteExpenseUsecase extends Mock implements DeleteExpenseUsecase {}
-
-class MockUpdateExpenseUsecase extends Mock implements UpdateExpenseUsecase {}
-
-class MockGetExpensesUsecase extends Mock implements GetExpensesUsecase {}
+@GenerateNiceMocks([
+  MockSpec<AddExpenseUsecase>(),
+  MockSpec<DeleteExpenseUsecase>(),
+  MockSpec<UpdateExpenseUsecase>(),
+  MockSpec<GetExpensesUsecase>(),
+])
+import 'expense_list_provider_test.mocks.dart';
 
 void main() {
-  late MockAddExpenseUsecase mockAddExpenseUsecase;
-  late MockDeleteExpenseUsecase mockDeleteExpenseUsecase;
-  late MockUpdateExpenseUsecase mockUpdateExpenseUsecase;
+  late AddExpenseUsecase mockAddExpenseUsecase;
+  late DeleteExpenseUsecase mockDeleteExpenseUsecase;
+  late UpdateExpenseUsecase mockUpdateExpenseUsecase;
 
   late ExpensesListProvider provider;
 
@@ -59,8 +60,8 @@ void main() {
       final result = await provider.addExpense(name, dollars, cents, date);
 
       // assert
-      verify(mockAddExpenseUsecase.call(AddExpenseParam(name, amount, date)));
       expect(result, ExpensesListProviderActions.success);
+      verify(mockAddExpenseUsecase.call(AddExpenseParam(name, amount, date)));
     });
 
     test('Add Expense with empty name', () async {
@@ -119,7 +120,7 @@ void main() {
 
       // act
       final result =
-          await provider.updateExpense(0, id, name, dollars, cents, date);
+          await provider.updateExpense(-1, id, name, dollars, cents, date);
 
       // assert
       verify(mockUpdateExpenseUsecase
@@ -130,12 +131,12 @@ void main() {
     test('Update Expense with ID < 1', () async {
       // arrange
       when(mockUpdateExpenseUsecase
-              .call(UpdateExpenseParam(0, name, amount, date)))
+              .call(UpdateExpenseParam(-1, name, amount, date)))
           .thenAnswer((_) async => left(ExpenseIdNotValidFailure()));
 
       // act
       final result =
-          await provider.updateExpense(0, 0, name, dollars, cents, date);
+          await provider.updateExpense(-1, 0, name, dollars, cents, date);
 
       // assert
       verify(mockUpdateExpenseUsecase
@@ -193,27 +194,27 @@ void main() {
   group('Test Delete Expense', () {
     test('Delete Expense with id <1', () async {
       // arrange
-      when(mockDeleteExpenseUsecase.call(DeleteExpenseParam(0)))
+      when(mockDeleteExpenseUsecase.call(const DeleteExpenseParam(id)))
           .thenAnswer((_) async => left(ExpenseIdNotValidFailure()));
 
       // act
-      final result = await provider.deleteExpense(0, id);
+      final result = await provider.deleteExpense(-1, 0);
 
       // assert
-      verify(mockDeleteExpenseUsecase.call(DeleteExpenseParam(id)));
+      verify(mockDeleteExpenseUsecase.call(const DeleteExpenseParam(id)));
       expect(result, ExpensesListProviderActions.success);
     });
 
     test('Delete Expense with id <1', () async {
       // arrange
-      when(mockDeleteExpenseUsecase.call(DeleteExpenseParam(0)))
+      when(mockDeleteExpenseUsecase.call(const DeleteExpenseParam(id)))
           .thenAnswer((_) async => left(ExpenseIdNotValidFailure()));
 
       // act
       final result = await provider.deleteExpense(0, 0);
 
       // assert
-      verify(mockDeleteExpenseUsecase.call(DeleteExpenseParam(0)));
+      verify(mockDeleteExpenseUsecase.call(const DeleteExpenseParam(id)));
       expect(result, ExpensesListProviderActions.showIdNotValidMessage);
     });
   });

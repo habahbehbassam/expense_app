@@ -1,5 +1,7 @@
-class ExpenseItemEntity {
-  ExpenseItemEntity({
+import 'package:equatable/equatable.dart';
+
+class ExpenseItemEntity extends Equatable {
+  const ExpenseItemEntity({
     this.id,
     required this.name,
     required this.dollars,
@@ -12,4 +14,7 @@ class ExpenseItemEntity {
   final int dollars;
   final int cents;
   final DateTime date;
+
+  @override
+  List<Object?> get props => [id, name, dollars, cents, date.millisecondsSinceEpoch];
 }

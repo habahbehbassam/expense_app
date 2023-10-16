@@ -1,5 +1,7 @@
-class ExpenseItemModel {
-  ExpenseItemModel({
+import 'package:equatable/equatable.dart';
+
+class ExpenseItemModel extends Equatable{
+  const ExpenseItemModel({
     required this.name,
     required this.amount,
     required this.dateTimestamp,
@@ -18,4 +20,7 @@ class ExpenseItemModel {
   final String name;
   final double amount;
   final int dateTimestamp;
+
+  @override
+  List<Object?> get props => [id,name,amount,dateTimestamp];
 }

@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:equatable/equatable.dart';
 import 'package:safqah_assessment/core/error/failures.dart';
 import 'package:safqah_assessment/core/usecases/usecase.dart';
 import 'package:safqah_assessment/features/expenses_list/domain/entities/expense_item_entity.dart';
@@ -24,14 +25,17 @@ class AddExpenseUsecase extends UseCase<ExpenseItemEntity, AddExpenseParam> {
       params.name,
       params.amount,
       params.date,
-    );
+    )!;
   }
 }
 
-class AddExpenseParam {
-  AddExpenseParam(this.name, this.amount, this.date);
+class AddExpenseParam extends Equatable{
+  const AddExpenseParam(this.name, this.amount, this.date);
 
   final String name;
   final double amount;
   final DateTime date;
+
+  @override
+  List<Object?> get props => [name,amount,date];
 }
